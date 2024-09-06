@@ -1,22 +1,28 @@
 import pandas as pd
+import warnings
 import datetime
+
+warnings.simplefilter(action='ignore', category=pd.errors.SettingWithCopyWarning)
 
 df = pd.read_csv("raw_ohlcv_data.csv")
 
 stocks = {"WTI": "West Texas Intermediate",
           "XOM": "Exxon Mobil",
           "CVX": "Chevron Corporation",
-          "SHEL": "Shell",
           "LMT": "Lockheed Martin",
-          "MA": "Mastercard",
-          "JPM": "JP Morgan",
-          "KO": "Coca-Cola Co"
+          "SPY": "Standard and Poor 500",
+          "XOP": "S&P500 - Oil & Gas Exploration & Production",
+          "SOYB": "Bloomberg Soybean Subindex",
+          "RJA": "Element rogers international commodity agriculture ETN",
+          "XLF": "Financial Sector Performance in the SNP 500",
+          "XAR": "S&P 500 - Aerospace & Defence ETF",
+          "XLB": "S&P 500 - Healthcare"
           }
 
 # defining values to keep in the data set
 # these are set manually / predefined
 tickers = [ticker for ticker, _ in stocks.items()]
-start_date = pd.to_datetime(datetime.date(2015, 1, 1))
+start_date = pd.to_datetime(datetime.date(2000, 1, 1))
 
 df['date'] = pd.to_datetime(df["date"])
 df = df[df['date'] > start_date]
@@ -57,15 +63,17 @@ for ticker in tickers:
         shortened[f"{ticker}_{col}"] = shortened[col].copy()
 
     shortened.drop(final_columns_drop, inplace=True, axis=1)
-    print(shortened.head())
-    print(wide_df.head())
     wide_df = wide_df.merge(shortened, on=["date"])
 
 # reset index
-df = df.reset_index(drop=True)
+wide_df = wide_df.set_index('date')
+wide_df = wide_df.reset_index()
+wide_df = wide_df.set_index('date')
 
 # tests
 if __name__ == '__main__':
     print(wide_df.head)
-    print(wide_df.info)
+    cols = wide_df.columns.tolist()
+    for c in cols:
+        print(c)
     wide_df.to_csv("market_data.csv")
