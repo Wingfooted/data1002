@@ -48,6 +48,7 @@ def completeness_statistics(df):
 
     return percentage_completeness
 
+
 def plots(df, ncols=2):
     plottable = [col
         for col in df.columns.tolist()
@@ -76,13 +77,14 @@ def plots(df, ncols=2):
     plt.show()
     plt.savefig("qqplots.py")
 
+
 if __name__ == '__main__':
     df = pd.read_csv("market_data.csv")
 #    print(completeness_statistics(df))
     #plots(df)
     descriptive_statistics_columns = df.columns.tolist()
 
-    del descriptive_statistics_columns[0] # this removes the date column
+    del descriptive_statistics_columns[0]  # this removes the date column
 #    print(descriptive_statistics_columns)
     ds_df = descriptive_statistics(df, descriptive_statistics_columns)
     print(ds_df.head())
